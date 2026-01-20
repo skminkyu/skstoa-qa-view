@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>상품 정보</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; line-height: 1.6; }
+    h2 { margin-top: 0; }
+    .section { margin-bottom: 18px; }
+    .label { font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<div id="content">상품 정보를 불러오는 중입니다…</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const key = params.get("key");
+
+if (!key) {
+  document.getElementById("content").innerText =
+    "유효하지 않은 접근입니다.";
+} else {
+  fetch("https://script.google.com/macros/s/AKfycbxfPXohelRx448UJlVrvbJtG5M9EB2akZDfBkxflGyEI3Hpm4Os4lE9K3DmoiU0ZoaELw/exec?key=" + key)
+    .then(res => res.json())
+    .then(d => {
+      if (d.error) {
+        document.getElementById("content").innerText = d.error;
+        return;
+      }
+
+      document.getElementById("content").innerHTML = `
+        <h2>${d.name}</h2>
+
+        <div class="section"><span class="label">카테고리</span>: ${d.category}</div>
+        <div class="section"><span class="label">제조국</span>: ${d.country}</div>
+
+        <div class="section">
+          <div class="label">제조공정</div>
+          <div>${d.process}</div>
+        </div>
+
+        ${d.ingredients ? `<div class="section"><div class="label">원재료</div>${d.ingredients}</div>` : ""}
+        ${d.nutrition ? `<div class="section"><div class="label">영양성분</div>${d.nutrition}</div>` : ""}
+
+        ${d.reportUrl ? `<div class="section">
+          <a href="${d.reportUrl}" target="_blank">시험성적서(PDF) 보기</a>
+        </div>` : ""}
+      `;
+    })
+    .catch(() => {
+      document.getElementById("content").innerText =
+        "데이터를 불러오지 못했습니다.";
+    });
+}
+</script>
+
+</body>
+</html>
