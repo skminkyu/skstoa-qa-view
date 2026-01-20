@@ -23,7 +23,7 @@ if (!key) {
   document.getElementById("content").innerText =
     "유효하지 않은 접근입니다.";
 } else {
-  fetch("https://script.google.com/macros/s/AKfycbxfPXohelRx448UJlVrvbJtG5M9EB2akZDfBkxflGyEI3Hpm4Os4lE9K3DmoiU0ZoaELw/exec?key=" + key)
+  fetch("https://script.google.com/macros/s/AKfycbxzLtjSjae7CSWh07HdLzgWsORtuax7O-PsHX4AR4utC9fgBeM-LL2hB_bavoAo6X4kRQ/exec?key=" + key)
     .then(res => res.json())
     .then(d => {
       if (d.error) {
