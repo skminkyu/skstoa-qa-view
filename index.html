@@ -34,33 +34,49 @@ if (!key) {
       document.getElementById("content").innerHTML = `
         <h2>${d.name}</h2>
 
-        <div class="section"><span class="label">카테고리</span>: ${d.category}</div>
-        <div class="section"><span class="label">제조국</span>: ${d.country}</div>
+        <div class="section">
+          <span class="label">카테고리</span>: ${d.category}
+        </div>
+
+        <div class="section">
+          <span class="label">제조국</span>: ${d.country}
+        </div>
 
         <div class="section">
           <div class="label">제조공정</div>
           <div>${d.process}</div>
         </div>
 
-        ${d.ingredients ? `<div class="section"><div class="label">원재료</div>${d.ingredients}</div>` : ""}
-        ${d.nutrition ? `<div class="section"><div class="label">영양성분</div>${d.nutrition}</div>` : ""}
+        ${d.ingredients ? `
+          <div class="section">
+            <div class="label">원재료</div>
+            <div>${d.ingredients}</div>
+          </div>` : ""}
 
-        ${d.reportUrl ? `<div class="section">
-          <a href="${d.reportUrl}" target="_blank">시험성적서(PDF) 보기</a>
-        </div>` : ""}
+        ${d.nutrition ? `
+          <div class="section">
+            <div class="label">영양성분</div>
+            <div>${d.nutrition}</div>
+          </div>` : ""}
+
+        ${d.reportUrl ? `
+          <div class="section">
+            <a href="${d.reportUrl}" target="_blank">
+              시험성적서(PDF) 보기
+            </a>
+          </div>` : ""}
+
         ${d.videoUrl && d.videoUrl.includes("youtube") ? `
-  <div class="section">
-    <div class="label">제품 소개 영상</div>
-    <iframe
-      width="100%"
-      height="215"
-      src="${d.videoUrl.replace("watch?v=", "embed/")}"
-      frameborder="0"
-      allowfullscreen>
-    </iframe>
-  </div>
-` : ""}
-
+          <div class="section">
+            <div class="label">제품 소개 영상</div>
+            <iframe
+              width="100%"
+              height="215"
+              src="${d.videoUrl.replace("watch?v=", "embed/")}"
+              frameborder="0"
+              allowfullscreen>
+            </iframe>
+          </div>` : ""}
       `;
     })
     .catch(() => {
@@ -72,4 +88,3 @@ if (!key) {
 
 </body>
 </html>
-<pre>${JSON.stringify(d, null, 2)}</pre>
