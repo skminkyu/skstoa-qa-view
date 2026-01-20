@@ -5,10 +5,25 @@
   <title>상품 정보</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: Arial, sans-serif; padding: 16px; line-height: 1.6; }
-    h2 { margin-top: 0; }
-    .section { margin-bottom: 18px; }
-    .label { font-weight: bold; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 16px;
+      line-height: 1.6;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    .section {
+      margin-bottom: 18px;
+    }
+    .label {
+      font-weight: bold;
+      margin-bottom: 4px;
+      display: block;
+    }
+    iframe {
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
@@ -23,7 +38,9 @@ if (!key) {
   document.getElementById("content").innerText =
     "유효하지 않은 접근입니다.";
 } else {
-  fetch("https://script.google.com/macros/s/AKfycbyDEtx7QZhu0MMcXVxYiQP-IcMzsetr-CahGaLhAVLUJ8WbW5PaEYEYdPybo-C1yvhHeA/exec?key=" + key)
+  fetch(
+    "https://script.google.com/macros/s/AKfycbyDEtx7QZhu0MMcXVxYiQP-IcMzsetr-CahGaLhAVLUJ8WbW5PaEYEYdPybo-C1yvhHeA/exec?key=" + key
+  )
     .then(res => res.json())
     .then(d => {
       if (d.error) {
@@ -35,28 +52,30 @@ if (!key) {
         <h2>${d.name}</h2>
 
         <div class="section">
-          <span class="label">카테고리</span>: ${d.category}
+          <span class="label">카테고리</span>
+          ${d.category}
         </div>
 
         <div class="section">
-          <span class="label">제조국</span>: ${d.country}
+          <span class="label">제조국</span>
+          ${d.country}
         </div>
 
         <div class="section">
-          <div class="label">제조공정</div>
-          <div>${d.process}</div>
+          <span class="label">제조공정</span>
+          ${d.process}
         </div>
 
         ${d.ingredients ? `
           <div class="section">
-            <div class="label">원재료</div>
-            <div>${d.ingredients}</div>
+            <span class="label">원재료</span>
+            ${d.ingredients}
           </div>` : ""}
 
         ${d.nutrition ? `
           <div class="section">
-            <div class="label">영양성분</div>
-            <div>${d.nutrition}</div>
+            <span class="label">영양성분</span>
+            ${d.nutrition}
           </div>` : ""}
 
         ${d.reportUrl ? `
@@ -66,13 +85,15 @@ if (!key) {
             </a>
           </div>` : ""}
 
-        ${d.videoUrl && d.videoUrl.includes("youtube") ? `
+        ${d.videoUrl ? `
           <div class="section">
-            <div class="label">제품 소개 영상</div>
+            <span class="label">제품 소개 영상</span>
             <iframe
               width="100%"
               height="215"
-              src="${d.videoUrl.replace("watch?v=", "embed/")}"
+              src="${d.videoUrl
+                .replace("watch?v=", "embed/")
+                .replace("youtu.be/", "www.youtube.com/embed/")}"
               frameborder="0"
               allowfullscreen>
             </iframe>
