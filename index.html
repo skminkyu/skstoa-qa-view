@@ -26,11 +26,20 @@
       display: block;
     }
 
-    /* 🔹 반응형 영상 컨테이너 (16:9) */
+    a {
+      color: #1a73e8;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* 🔹 반응형 영상 (16:9) */
     .video-wrap {
       position: relative;
       width: 100%;
-      padding-top: 56.25%; /* 16:9 */
+      padding-top: 56.25%;
       border-radius: 10px;
       overflow: hidden;
       background: #000;
@@ -45,13 +54,10 @@
       border: 0;
     }
 
-    a {
-      color: #1a73e8;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
+    /* 🔹 알레르기 강조 */
+    .allergy {
+      color: #b00020;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -61,13 +67,20 @@
 <div id="content">상품 정보를 불러오는 중입니다…</div>
 
 <script>
+/* ===============================
+   URL 파라미터 처리
+================================ */
 const params = new URLSearchParams(window.location.search);
-const key = params.get("key");
+const key = params.get("key"); // v=캐시파라미터는 무시됨
 
 if (!key) {
   document.getElementById("content").innerText =
     "유효하지 않은 접근입니다.";
 } else {
+
+  /* ===============================
+     Apps Script API 호출
+  ================================ */
   fetch(
     "https://script.google.com/macros/s/AKfycbwUHGtqVsGUirdpMYqCIEKGjE41iTHTNF6TMZjLYK9oZbKspvZSe-duNHWBMCqmWe2imA/exec?key=" + key
   )
@@ -83,18 +96,24 @@ if (!key) {
 
         <div class="section">
           <span class="label">카테고리</span>
-          ${d.category}
+          ${d.category || "-"}
         </div>
 
         <div class="section">
           <span class="label">제조국</span>
-          ${d.country}
+          ${d.country || "-"}
         </div>
 
         <div class="section">
           <span class="label">제조공정</span>
-          ${d.process}
+          ${d.process || "-"}
         </div>
+
+        ${d.allergy ? `
+          <div class="section">
+            <span class="label allergy">알레르기 정보</span>
+            ${d.allergy}
+          </div>` : ""}
 
         ${d.ingredients ? `
           <div class="section">
@@ -111,7 +130,15 @@ if (!key) {
         ${d.reportUrl ? `
           <div class="section">
             <a href="${d.reportUrl}" target="_blank">
-              시험성적서(PDF) 보기
+              ▶ 시험성적서(PDF) 보기
+            </a>
+          </div>` : ""}
+
+        ${d.esg ? `
+          <div class="section">
+            <span class="label">친환경 · ESG 정보</span>
+            <a href="${d.esg}" target="_blank">
+              ▶ 친환경 / ESG 관련 정보 바로가기
             </a>
           </div>` : ""}
 
