@@ -70,7 +70,7 @@ const key = params.get("key");
 if (!key) {
   document.getElementById("content").innerText = "유효하지 않은 접근입니다.";
 } else {
-  fetch("AKfycbyX_Rb_AkDhiVvgU9BltgUvgfJjZBEdfwDN0lksPuskgDf3uuXefAytmV3r6zOCA0iBxQ?key=" + key)
+  fetch("https://script.google.com/macros/s/AKfycbxN_ClKExW5KvFtx8I0QM954C5Q2HIlquTEjB0jdXKfrGFc65qMZw07V_lxpPqtSWllMQ/exec?key=" + key)
     .then(res => res.json())
     .then(d => {
       if (d.error) {
@@ -136,3 +136,4 @@ if (!key) {
 
 </body>
 </html>
+
