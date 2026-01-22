@@ -31,6 +31,11 @@
     a { color: #1a73e8; text-decoration: none; }
     a:hover { text-decoration: underline; }
 
+    img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+
     .video-wrap {
       position: relative;
       width: 100%;
@@ -47,7 +52,10 @@
       border: 0;
     }
 
-    .allergy { color: #b00020; font-weight: bold; }
+    .allergy {
+      color: #b00020;
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -62,7 +70,7 @@ const key = params.get("key");
 if (!key) {
   document.getElementById("content").innerText = "유효하지 않은 접근입니다.";
 } else {
-  fetch("https://script.google.com/macros/s/AKfycbwDCsA0dZ10ROlL8VTLdYkCdT1_7NrHQ0qCycl4njwjtBPo6ljcKXCaUE9aGNAH7_ssyw/exec?key=" + key)
+  fetch("AKfycbyX_Rb_AkDhiVvgU9BltgUvgfJjZBEdfwDN0lksPuskgDf3uuXefAytmV3r6zOCA0iBxQ?key=" + key)
     .then(res => res.json())
     .then(d => {
       if (d.error) {
@@ -74,6 +82,12 @@ if (!key) {
         <h2>${d.name}</h2>
 
         <table>
+          ${d.imageUrl ? `
+          <tr>
+            <th>상품 이미지</th>
+            <td><img src="${d.imageUrl}" alt="상품 이미지"></td>
+          </tr>` : ""}
+
           <tr><th>카테고리</th><td>${d.category || "-"}</td></tr>
           <tr><th>제조국</th><td>${d.country || "-"}</td></tr>
           <tr><th>제조원</th><td>${d.manufacturer || "-"}</td></tr>
@@ -81,37 +95,37 @@ if (!key) {
           <tr><th>제조공정</th><td>${d.process || "-"}</td></tr>
 
           ${d.allergy ? `
-            <tr>
-              <th class="allergy">알레르기 정보</th>
-              <td class="allergy">${d.allergy}</td>
-            </tr>` : ""}
+          <tr>
+            <th class="allergy">알레르기 정보</th>
+            <td class="allergy">${d.allergy}</td>
+          </tr>` : ""}
 
           ${d.ingredients ? `<tr><th>원재료</th><td>${d.ingredients}</td></tr>` : ""}
           ${d.nutrition ? `<tr><th>영양성분</th><td>${d.nutrition}</td></tr>` : ""}
 
           ${d.esg ? `
-            <tr>
-              <th>친환경 · ESG</th>
-              <td><a href="${d.esg}" target="_blank">▶ 친환경 / ESG 정보 바로가기</a></td>
-            </tr>` : ""}
+          <tr>
+            <th>친환경·ESG</th>
+            <td><a href="${d.esg}" target="_blank">▶ 친환경 / ESG 정보 바로가기</a></td>
+          </tr>` : ""}
 
           ${d.reportUrl ? `
-            <tr>
-              <th>시험성적서</th>
-              <td><a href="${d.reportUrl}" target="_blank">▶ 시험성적서(PDF) 보기</a></td>
-            </tr>` : ""}
+          <tr>
+            <th>시험성적서</th>
+            <td><a href="${d.reportUrl}" target="_blank">▶ 시험성적서(PDF) 보기</a></td>
+          </tr>` : ""}
         </table>
 
         ${d.videoUrl ? `
-          <strong>제품 소개 영상</strong>
-          <div class="video-wrap" style="margin-top:10px;">
-            <iframe
-              src="${d.videoUrl
-                .replace("watch?v=", "embed/")
-                .replace("youtu.be/", "www.youtube.com/embed/")}"
-              allowfullscreen>
-            </iframe>
-          </div>` : ""}
+        <strong>제품 소개 영상</strong>
+        <div class="video-wrap" style="margin-top:10px;">
+          <iframe
+            src="${d.videoUrl
+              .replace("watch?v=", "embed/")
+              .replace("youtu.be/", "www.youtube.com/embed/")}"
+            allowfullscreen>
+          </iframe>
+        </div>` : ""}
       `;
     })
     .catch(() => {
@@ -122,4 +136,3 @@ if (!key) {
 
 </body>
 </html>
-
