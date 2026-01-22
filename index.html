@@ -13,17 +13,30 @@
     }
 
     h2 {
-      margin-top: 0;
+      margin-bottom: 16px;
     }
 
-    .section {
-      margin-bottom: 20px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
     }
 
-    .label {
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      width: 28%;
+      background-color: #f5f5f5;
       font-weight: bold;
-      margin-bottom: 6px;
-      display: block;
+    }
+
+    td {
+      width: 72%;
     }
 
     a {
@@ -35,7 +48,7 @@
       text-decoration: underline;
     }
 
-    /* 🔹 반응형 영상 (16:9) */
+    /* 🔹 반응형 영상 */
     .video-wrap {
       position: relative;
       width: 100%;
@@ -54,7 +67,6 @@
       border: 0;
     }
 
-    /* 🔹 알레르기 강조 */
     .allergy {
       color: #b00020;
       font-weight: bold;
@@ -67,20 +79,13 @@
 <div id="content">상품 정보를 불러오는 중입니다…</div>
 
 <script>
-/* ===============================
-   URL 파라미터 처리
-================================ */
 const params = new URLSearchParams(window.location.search);
-const key = params.get("key"); // v=캐시파라미터는 무시됨
+const key = params.get("key");
 
 if (!key) {
   document.getElementById("content").innerText =
     "유효하지 않은 접근입니다.";
 } else {
-
-  /* ===============================
-     Apps Script API 호출
-  ================================ */
   fetch(
     "https://script.google.com/macros/s/AKfycbwUHGtqVsGUirdpMYqCIEKGjE41iTHTNF6TMZjLYK9oZbKspvZSe-duNHWBMCqmWe2imA/exec?key=" + key
   )
@@ -94,58 +99,54 @@ if (!key) {
       document.getElementById("content").innerHTML = `
         <h2>${d.name}</h2>
 
-        <div class="section">
-          <span class="label">카테고리</span>
-          ${d.category || "-"}
-        </div>
+        <table>
+          <tr><th>카테고리</th><td>${d.category || "-"}</td></tr>
+          <tr><th>제조국</th><td>${d.country || "-"}</td></tr>
+          <tr><th>제조공정</th><td>${d.process || "-"}</td></tr>
 
-        <div class="section">
-          <span class="label">제조국</span>
-          ${d.country || "-"}
-        </div>
+          ${d.allergy ? `
+            <tr>
+              <th class="allergy">알레르기 정보</th>
+              <td class="allergy">${d.allergy}</td>
+            </tr>` : ""}
 
-        <div class="section">
-          <span class="label">제조공정</span>
-          ${d.process || "-"}
-        </div>
+          ${d.ingredients ? `
+            <tr>
+              <th>원재료</th>
+              <td>${d.ingredients}</td>
+            </tr>` : ""}
 
-        ${d.allergy ? `
-          <div class="section">
-            <span class="label allergy">알레르기 정보</span>
-            ${d.allergy}
-          </div>` : ""}
+          ${d.nutrition ? `
+            <tr>
+              <th>영양성분</th>
+              <td>${d.nutrition}</td>
+            </tr>` : ""}
 
-        ${d.ingredients ? `
-          <div class="section">
-            <span class="label">원재료</span>
-            ${d.ingredients}
-          </div>` : ""}
+          ${d.esg ? `
+            <tr>
+              <th>친환경 · ESG</th>
+              <td>
+                <a href="${d.esg}" target="_blank">
+                  ▶ 친환경 / ESG 관련 정보 바로가기
+                </a>
+              </td>
+            </tr>` : ""}
 
-        ${d.nutrition ? `
-          <div class="section">
-            <span class="label">영양성분</span>
-            ${d.nutrition}
-          </div>` : ""}
-
-        ${d.reportUrl ? `
-          <div class="section">
-            <a href="${d.reportUrl}" target="_blank">
-              ▶ 시험성적서(PDF) 보기
-            </a>
-          </div>` : ""}
-
-        ${d.esg ? `
-          <div class="section">
-            <span class="label">친환경 · ESG 정보</span>
-            <a href="${d.esg}" target="_blank">
-              ▶ 친환경 / ESG 관련 정보 바로가기
-            </a>
-          </div>` : ""}
+          ${d.reportUrl ? `
+            <tr>
+              <th>시험성적서</th>
+              <td>
+                <a href="${d.reportUrl}" target="_blank">
+                  ▶ 시험성적서(PDF) 보기
+                </a>
+              </td>
+            </tr>` : ""}
+        </table>
 
         ${d.videoUrl ? `
-          <div class="section">
-            <span class="label">제품 소개 영상</span>
-            <div class="video-wrap">
+          <div>
+            <strong>제품 소개 영상</strong>
+            <div class="video-wrap" style="margin-top:10px;">
               <iframe
                 src="${d.videoUrl
                   .replace("watch?v=", "embed/")
