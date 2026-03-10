@@ -8,7 +8,7 @@
 <style>
 body {
   font-family: 'Pretendard', Arial, sans-serif;
-  background:#f5f6f8;
+  background:#f4f6f9;
   padding:16px;
 }
 
@@ -22,7 +22,7 @@ body {
   border-radius:16px;
   padding:20px;
   margin-bottom:20px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.05);
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
 }
 
 h2 {
@@ -57,7 +57,7 @@ img {
   background:#111;
   color:white;
   text-decoration:none;
-  margin-top:10px;
+  margin-top:15px;
 }
 
 .video-wrap {
@@ -72,6 +72,7 @@ img {
   position:absolute;
   top:0; left:0;
   width:100%; height:100%;
+  border:0;
 }
 </style>
 </head>
@@ -95,17 +96,42 @@ fetch("https://script.google.com/macros/s/AKfycbziSaUzTfCBwmWedztDd7pz84Z0B21QF9
     return;
   }
 
-  if(d.category === "패션"){
-    renderFashion(d);
-  } else if(d.category === "식품"){
+  const category = (d.category || "").trim();
+
+  if(category.includes("식품")){
     renderFood(d);
-  } else {
+  }
+  else if(category.includes("패션")){
+    renderFashion(d);
+  }
+  else{
     renderDefault(d);
   }
 });
 
-/* ---------------- 패션 전용 ---------------- */
+
+/* -----------------------------
+   영상 변환 함수 (공통)
+----------------------------- */
+function getEmbedUrl(url){
+  if(!url) return "";
+  if(url.includes("watch?v=")){
+    return url.replace("watch?v=","embed/");
+  }
+  if(url.includes("youtu.be/")){
+    const id = url.split("youtu.be/")[1];
+    return "https://www.youtube.com/embed/" + id;
+  }
+  return "";
+}
+
+
+/* -----------------------------
+   패션 전용 화면
+----------------------------- */
 function renderFashion(d){
+
+const embedUrl = getEmbedUrl(d.videoUrl);
 
 document.getElementById("content").innerHTML = `
   <div class="card">
@@ -131,20 +157,22 @@ document.getElementById("content").innerHTML = `
       </a>` : ""}
   </div>
 
-  ${d.videoUrl ? `
+  ${embedUrl ? `
   <div class="card">
     <div class="video-wrap">
-      <iframe
-        src="${d.videoUrl.replace("watch?v=","embed/")}"
-        allowfullscreen>
-      </iframe>
+      <iframe src="${embedUrl}" allowfullscreen></iframe>
     </div>
   </div>` : ""}
 `;
 }
 
-/* ---------------- 식품 전용 ---------------- */
+
+/* -----------------------------
+   식품 전용 화면
+----------------------------- */
 function renderFood(d){
+
+const embedUrl = getEmbedUrl(d.videoUrl);
 
 document.getElementById("content").innerHTML = `
   <div class="card">
@@ -167,11 +195,23 @@ document.getElementById("content").innerHTML = `
         시험성적서 PDF 보기
       </a>` : ""}
   </div>
+
+  ${embedUrl ? `
+  <div class="card">
+    <div class="video-wrap">
+      <iframe src="${embedUrl}" allowfullscreen></iframe>
+    </div>
+  </div>` : ""}
 `;
 }
 
+
+/* -----------------------------
+   기본 화면
+----------------------------- */
 function renderDefault(d){
-  document.getElementById("content").innerHTML = "<h2>"+d.name+"</h2>";
+  document.getElementById("content").innerHTML =
+    `<div class="card"><h2>${d.name}</h2></div>`;
 }
 </script>
 
