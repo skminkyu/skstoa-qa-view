@@ -44,7 +44,7 @@ img { max-width:100%; border-radius:8px; }
 const params = new URLSearchParams(window.location.search);
 const key = params.get("key");
 
-fetch("https://script.google.com/macros/s/AKfycbykW5W3-dBBmk81sUw3cOf5qSvKp3gPdhxQL_2rBD07nDyalUUtb-qYZYm7WqqWONniLg/exec" + key)
+fetch("https://script.google.com/macros/s/AKfycbziSaUzTfCBwmWedztDd7pz84Z0B21QF9QUS6_NzwSFIE-b9g4_jQ1TzacMTNEDhAPD/exec" + key)
   .then(res => res.json())
   .then(d => {
 
@@ -100,13 +100,14 @@ function renderFashion(d) {
     <h2>${d.name}</h2>
 
     <div class="card">
-      <img src="${d.imageUrl}">
+      <img src="${d.imageUrl || ''}">
     </div>
 
     <div class="card">
-      <div class="label">제조국</div>${d.country}
-      <div class="label">제조원</div>${d.manufacturer}
-      <div class="label">판매원</div>${d.seller}
+      <div class="label">제조국</div>${d.country || "-"}
+      <div class="label">제조원</div>${d.manufacturer || "-"}
+      <div class="label">판매원</div>${d.seller || "-"}
+
       <div class="label">혼용률</div>${d.mixRatio || "-"}
       <div class="label">수입원</div>${d.importer || "-"}
       <div class="label">제조년월</div>${d.manufactureDate || "-"}
