@@ -6,29 +6,68 @@
 <title>상품 정보</title>
 
 <style>
-body { font-family: Arial; padding:16px; }
-h2 { margin-bottom:20px; }
+body {
+  font-family: 'Pretendard', Arial, sans-serif;
+  background:#f5f6f8;
+  padding:16px;
+}
+
+.container {
+  max-width:600px;
+  margin:auto;
+}
 
 .card {
-  border:1px solid #ddd;
-  padding:16px;
+  background:white;
+  border-radius:16px;
+  padding:20px;
   margin-bottom:20px;
-  border-radius:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
 }
 
-.label {
+h2 {
+  margin-bottom:16px;
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+}
+
+td {
+  padding:10px 6px;
+  border-bottom:1px solid #eee;
+}
+
+td:first-child {
+  width:35%;
   font-weight:bold;
-  margin-top:8px;
+  color:#666;
 }
 
-img { max-width:100%; border-radius:8px; }
+img {
+  width:100%;
+  border-radius:12px;
+}
+
+.button {
+  display:inline-block;
+  padding:12px 16px;
+  border-radius:10px;
+  background:#111;
+  color:white;
+  text-decoration:none;
+  margin-top:10px;
+}
 
 .video-wrap {
   position:relative;
   width:100%;
   padding-top:56.25%;
-  margin-top:10px;
+  border-radius:12px;
+  overflow:hidden;
 }
+
 .video-wrap iframe {
   position:absolute;
   top:0; left:0;
@@ -36,103 +75,103 @@ img { max-width:100%; border-radius:8px; }
 }
 </style>
 </head>
+
 <body>
 
+<div class="container">
 <div id="content">불러오는 중...</div>
+</div>
 
 <script>
 const params = new URLSearchParams(window.location.search);
 const key = params.get("key");
 
 fetch("https://script.google.com/macros/s/AKfycbziSaUzTfCBwmWedztDd7pz84Z0B21QF9QUS6_NzwSFIE-b9g4_jQ1TzacMTNEDhAPD/exec?key=" + key)
-  .then(res => res.json())
-  .then(d => {
+.then(res => res.json())
+.then(d => {
 
-    if (d.error) {
-      document.getElementById("content").innerText = d.error;
-      return;
-    }
+  if(d.error){
+    document.getElementById("content").innerText = d.error;
+    return;
+  }
 
-    if (d.category === "식품") {
-      renderFood(d);
-    }
+  if(d.category === "패션"){
+    renderFashion(d);
+  } else if(d.category === "식품"){
+    renderFood(d);
+  } else {
+    renderDefault(d);
+  }
+});
 
-    else if (d.category === "패션") {
-      renderFashion(d);
-    }
+/* ---------------- 패션 전용 ---------------- */
+function renderFashion(d){
 
-    else {
-      renderDefault(d);
-    }
-  });
-
-/* --------------------------
-   식품 전용 화면
--------------------------- */
-function renderFood(d) {
-  document.getElementById("content").innerHTML = `
+document.getElementById("content").innerHTML = `
+  <div class="card">
     <h2>${d.name}</h2>
+    ${d.imageUrl ? `<img src="${d.imageUrl}">` : ""}
+  </div>
 
-    <div class="card">
-      <img src="${d.imageUrl}">
+  <div class="card">
+    <table>
+      <tr><td>제조국</td><td>${d.country || "-"}</td></tr>
+      <tr><td>제조원</td><td>${d.manufacturer || "-"}</td></tr>
+      <tr><td>판매원</td><td>${d.seller || "-"}</td></tr>
+      <tr><td>혼용률</td><td>${d.mixRatio || "-"}</td></tr>
+      <tr><td>수입원</td><td>${d.importer || "-"}</td></tr>
+      <tr><td>제조년월</td><td>${d.manufactureDate || "-"}</td></tr>
+      <tr><td>세탁방법</td><td>${d.washingMethod || "-"}</td></tr>
+      <tr><td>상품특징</td><td>${d.feature || "-"}</td></tr>
+    </table>
+
+    ${d.reportUrl ? `
+      <a href="${d.reportUrl}" target="_blank" class="button">
+        시험성적서 PDF 보기
+      </a>` : ""}
+  </div>
+
+  ${d.videoUrl ? `
+  <div class="card">
+    <div class="video-wrap">
+      <iframe
+        src="${d.videoUrl.replace("watch?v=","embed/")}"
+        allowfullscreen>
+      </iframe>
     </div>
-
-    <div class="card">
-      <div class="label">제조국</div>${d.country}
-      <div class="label">제조원</div>${d.manufacturer}
-      <div class="label">판매원</div>${d.seller}
-      <div class="label">원재료</div>${d.ingredients || "-"}
-      <div class="label">영양성분</div>${d.nutrition || "-"}
-      <div class="label">알레르기 정보</div>${d.allergy || "-"}
-    </div>
-
-    ${d.reportUrl ? `<div class="card">
-      <a href="${d.reportUrl}" target="_blank">시험성적서 보기</a>
-    </div>` : ""}
-  `;
+  </div>` : ""}
+`;
 }
 
-/* --------------------------
-   패션 전용 화면
--------------------------- */
-function renderFashion(d) {
-  document.getElementById("content").innerHTML = `
+/* ---------------- 식품 전용 ---------------- */
+function renderFood(d){
+
+document.getElementById("content").innerHTML = `
+  <div class="card">
     <h2>${d.name}</h2>
+    ${d.imageUrl ? `<img src="${d.imageUrl}">` : ""}
+  </div>
 
-    <div class="card">
-      <img src="${d.imageUrl || ''}">
-    </div>
+  <div class="card">
+    <table>
+      <tr><td>제조국</td><td>${d.country || "-"}</td></tr>
+      <tr><td>제조원</td><td>${d.manufacturer || "-"}</td></tr>
+      <tr><td>판매원</td><td>${d.seller || "-"}</td></tr>
+      <tr><td>원재료</td><td>${d.ingredients || "-"}</td></tr>
+      <tr><td>영양성분</td><td>${d.nutrition || "-"}</td></tr>
+      <tr><td>알레르기 정보</td><td>${d.allergy || "-"}</td></tr>
+    </table>
 
-    <div class="card">
-      <div class="label">제조국</div>${d.country || "-"}
-      <div class="label">제조원</div>${d.manufacturer || "-"}
-      <div class="label">판매원</div>${d.seller || "-"}
-
-      <div class="label">혼용률</div>${d.mixRatio || "-"}
-      <div class="label">수입원</div>${d.importer || "-"}
-      <div class="label">제조년월</div>${d.manufactureDate || "-"}
-      <div class="label">세탁방법</div>${d.washingMethod || "-"}
-      <div class="label">상품특징</div>${d.feature || "-"}
-    </div>
-
-    ${d.videoUrl ? `
-    <div class="card">
-      <div class="video-wrap">
-        <iframe
-          src="${d.videoUrl.replace("watch?v=","embed/")}"
-          allowfullscreen>
-        </iframe>
-      </div>
-    </div>` : ""}
-  `;
+    ${d.reportUrl ? `
+      <a href="${d.reportUrl}" target="_blank" class="button">
+        시험성적서 PDF 보기
+      </a>` : ""}
+  </div>
+`;
 }
 
-/* --------------------------
-   기본 화면
--------------------------- */
-function renderDefault(d) {
-  document.getElementById("content").innerHTML =
-    "<h2>" + d.name + "</h2>";
+function renderDefault(d){
+  document.getElementById("content").innerHTML = "<h2>"+d.name+"</h2>";
 }
 </script>
 
