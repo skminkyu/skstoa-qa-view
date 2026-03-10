@@ -1,139 +1,139 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>상품 정보</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>상품 정보</title>
 
-  <style>
-    body { font-family: Arial, sans-serif; padding: 16px; line-height: 1.6; }
-    h2 { margin-bottom: 16px; }
+<style>
+body { font-family: Arial; padding:16px; }
+h2 { margin-bottom:20px; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 24px;
-    }
+.card {
+  border:1px solid #ddd;
+  padding:16px;
+  margin-bottom:20px;
+  border-radius:10px;
+}
 
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      vertical-align: top;
-      text-align: left;
-    }
+.label {
+  font-weight:bold;
+  margin-top:8px;
+}
 
-    th {
-      width: 30%;
-      background: #f5f5f5;
-      font-weight: bold;
-    }
+img { max-width:100%; border-radius:8px; }
 
-    a { color: #1a73e8; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-
-    img {
-      max-width: 100%;
-      border-radius: 8px;
-    }
-
-    .video-wrap {
-      position: relative;
-      width: 100%;
-      padding-top: 56.25%;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #000;
-    }
-
-    .video-wrap iframe {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      border: 0;
-    }
-
-    .allergy {
-      color: #b00020;
-      font-weight: bold;
-    }
-  </style>
+.video-wrap {
+  position:relative;
+  width:100%;
+  padding-top:56.25%;
+  margin-top:10px;
+}
+.video-wrap iframe {
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+}
+</style>
 </head>
-
 <body>
 
-<div id="content">상품 정보를 불러오는 중입니다…</div>
+<div id="content">불러오는 중...</div>
 
 <script>
 const params = new URLSearchParams(window.location.search);
 const key = params.get("key");
 
-if (!key) {
-  document.getElementById("content").innerText = "유효하지 않은 접근입니다.";
-} else {
-  fetch("https://script.google.com/macros/s/AKfycbxN_ClKExW5KvFtx8I0QM954C5Q2HIlquTEjB0jdXKfrGFc65qMZw07V_lxpPqtSWllMQ/exec?key=" + key)
-    .then(res => res.json())
-    .then(d => {
-      if (d.error) {
-        document.getElementById("content").innerText = d.error;
-        return;
-      }
+fetch("https://script.google.com/macros/s/AKfycbykW5W3-dBBmk81sUw3cOf5qSvKp3gPdhxQL_2rBD07nDyalUUtb-qYZYm7WqqWONniLg/exec" + key)
+  .then(res => res.json())
+  .then(d => {
 
-      document.getElementById("content").innerHTML = `
-        <h2>${d.name}</h2>
+    if (d.error) {
+      document.getElementById("content").innerText = d.error;
+      return;
+    }
 
-        <table>
-          ${d.imageUrl ? `
-          <tr>
-            <th>상품 이미지</th>
-            <td><img src="${d.imageUrl}" alt="상품 이미지"></td>
-          </tr>` : ""}
+    if (d.category === "식품") {
+      renderFood(d);
+    }
 
-          <tr><th>카테고리</th><td>${d.category || "-"}</td></tr>
-          <tr><th>제조국</th><td>${d.country || "-"}</td></tr>
-          <tr><th>제조원</th><td>${d.manufacturer || "-"}</td></tr>
-          <tr><th>판매원</th><td>${d.seller || "-"}</td></tr>
-          <tr><th>제조공정</th><td>${d.process || "-"}</td></tr>
+    else if (d.category === "패션") {
+      renderFashion(d);
+    }
 
-          ${d.allergy ? `
-          <tr>
-            <th class="allergy">알레르기 정보</th>
-            <td class="allergy">${d.allergy}</td>
-          </tr>` : ""}
+    else {
+      renderDefault(d);
+    }
+  });
 
-          ${d.ingredients ? `<tr><th>원재료</th><td>${d.ingredients}</td></tr>` : ""}
-          ${d.nutrition ? `<tr><th>영양성분</th><td>${d.nutrition}</td></tr>` : ""}
+/* --------------------------
+   식품 전용 화면
+-------------------------- */
+function renderFood(d) {
+  document.getElementById("content").innerHTML = `
+    <h2>${d.name}</h2>
 
-          ${d.esg ? `
-          <tr>
-            <th>친환경·ESG</th>
-            <td><a href="${d.esg}" target="_blank">▶ 친환경 / ESG 정보 바로가기</a></td>
-          </tr>` : ""}
+    <div class="card">
+      <img src="${d.imageUrl}">
+    </div>
 
-          ${d.reportUrl ? `
-          <tr>
-            <th>시험성적서</th>
-            <td><a href="${d.reportUrl}" target="_blank">▶ 시험성적서(PDF) 보기</a></td>
-          </tr>` : ""}
-        </table>
+    <div class="card">
+      <div class="label">제조국</div>${d.country}
+      <div class="label">제조원</div>${d.manufacturer}
+      <div class="label">판매원</div>${d.seller}
+      <div class="label">원재료</div>${d.ingredients || "-"}
+      <div class="label">영양성분</div>${d.nutrition || "-"}
+      <div class="label">알레르기 정보</div>${d.allergy || "-"}
+    </div>
 
-        ${d.videoUrl ? `
-        <strong>제품 소개 영상</strong>
-        <div class="video-wrap" style="margin-top:10px;">
-          <iframe
-            src="${d.videoUrl
-              .replace("watch?v=", "embed/")
-              .replace("youtu.be/", "www.youtube.com/embed/")}"
-            allowfullscreen>
-          </iframe>
-        </div>` : ""}
-      `;
-    })
-    .catch(() => {
-      document.getElementById("content").innerText = "데이터를 불러오지 못했습니다.";
-    });
+    ${d.reportUrl ? `<div class="card">
+      <a href="${d.reportUrl}" target="_blank">시험성적서 보기</a>
+    </div>` : ""}
+  `;
+}
+
+/* --------------------------
+   패션 전용 화면
+-------------------------- */
+function renderFashion(d) {
+  document.getElementById("content").innerHTML = `
+    <h2>${d.name}</h2>
+
+    <div class="card">
+      <img src="${d.imageUrl}">
+    </div>
+
+    <div class="card">
+      <div class="label">제조국</div>${d.country}
+      <div class="label">제조원</div>${d.manufacturer}
+      <div class="label">판매원</div>${d.seller}
+      <div class="label">혼용률</div>${d.mixRatio || "-"}
+      <div class="label">수입원</div>${d.importer || "-"}
+      <div class="label">제조년월</div>${d.manufactureDate || "-"}
+      <div class="label">세탁방법</div>${d.washingMethod || "-"}
+      <div class="label">상품특징</div>${d.feature || "-"}
+    </div>
+
+    ${d.videoUrl ? `
+    <div class="card">
+      <div class="video-wrap">
+        <iframe
+          src="${d.videoUrl.replace("watch?v=","embed/")}"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </div>` : ""}
+  `;
+}
+
+/* --------------------------
+   기본 화면
+-------------------------- */
+function renderDefault(d) {
+  document.getElementById("content").innerHTML =
+    "<h2>" + d.name + "</h2>";
 }
 </script>
 
 </body>
 </html>
-
