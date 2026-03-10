@@ -44,7 +44,7 @@ img { max-width:100%; border-radius:8px; }
 const params = new URLSearchParams(window.location.search);
 const key = params.get("key");
 
-fetch("https://script.google.com/macros/s/AKfycbziSaUzTfCBwmWedztDd7pz84Z0B21QF9QUS6_NzwSFIE-b9g4_jQ1TzacMTNEDhAPD/exec" + key)
+fetch("https://script.google.com/macros/s/AKfycbziSaUzTfCBwmWedztDd7pz84Z0B21QF9QUS6_NzwSFIE-b9g4_jQ1TzacMTNEDhAPD/exec?key=" + key)
   .then(res => res.json())
   .then(d => {
 
